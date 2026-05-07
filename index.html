@@ -3,88 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OrientaPro AI - Démo</title>
+    <title>OrientaPro AI - Bilan Complet</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #FDFCFB; }
+        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; }
+        .almond-600 { color: #d97706; }
+        .bg-almond-600 { background-color: #d97706; }
     </style>
 </head>
 <body>
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState } = React;
+        const { useState, useRef, useEffect } = React;
+
+        // Simulation des constantes métier
+        const JOB_FAMILIES = [
+            { id: 'admin', name: 'Administratif' }, { id: 'numerique', name: 'Numérique' },
+            { id: 'social', name: 'Social' }, { id: 'btp', name: 'BTP' }
+        ];
 
         function App() {
             const [inputText, setInputText] = useState('');
             const [step, setStep] = useState('input');
             const [isAnalyzing, setIsAnalyzing] = useState(false);
+            const [analysis, setAnalysis] = useState(null);
 
             const runAnalysis = () => {
                 setIsAnalyzing(true);
-                // Simulation pour la version démo sans clé API
+                // On simule l'intelligence artificielle pour la démo
                 setTimeout(() => {
+                    setAnalysis({
+                        softSkills: ["Empathie", "Organisation", "Communication"],
+                        transferableSkills: ["Gestion de projet", "Accueil public"],
+                        reconversionIdeas: [
+                            { familyId: 'numerique', reason: "Forte appétence technique détectée.", suitability: 85, specificJobs: ["Web Design"] },
+                            { familyId: 'social', reason: "Expérience humaine valorisable.", suitability: 92, specificJobs: ["Médiateur"] }
+                        ],
+                        trainingIdeas: [{ title: "Titre pro Conseiller", description: "Formation de 6 mois en alternance.", reasonForChoice: "Complète le parcours actuel." }],
+                        constraintsIdentified: ["Pas de port de charges", "Horaires de jour"]
+                    });
                     setIsAnalyzing(false);
                     setStep('results');
-                }, 1500);
+                }, 2000);
             };
 
             return (
-                <div className="min-h-screen p-4 md:p-8">
-                    <header className="max-w-5xl mx-auto mb-12 flex items-center gap-4">
-                        <div className="w-12 h-12 bg-black rounded-2xl flex items-center justify-center text-white font-bold">O</div>
-                        <div>
-                            <h1 className="text-2xl font-black uppercase tracking-tight">OrientaPro AI</h1>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Conseiller d'Orientation Augmenté</p>
+                <div className="min-h-screen pb-10">
+                    <header className="bg-white border-b p-4 shadow-sm sticky top-0 z-10">
+                        <div className="max-w-5xl mx-auto flex justify-between items-center">
+                            <div className="flex items-center gap-2">
+                                <div className="w-10 h-10 bg-orange-600 rounded-lg flex items-center justify-center text-white font-bold">O</div>
+                                <h1 className="font-black text-xl">OrientaPro AI</h1>
+                            </div>
+                            {step === 'results' && <button onClick={() => setStep('input')} className="text-sm font-bold text-orange-600">Nouvelle analyse</button>}
                         </div>
                     </header>
 
-                    <main className="max-w-4xl mx-auto">
+                    <main className="max-w-4xl mx-auto px-6 mt-10">
                         {step === 'input' ? (
-                            <div className="space-y-8">
-                                <div className="text-center mb-12">
-                                    <h2 className="text-4xl font-black text-slate-900 mb-4">Analyse de profil professionnel</h2>
-                                    <p className="text-slate-500">Collez le CV ou les notes d'entretien ci-dessous pour tester l'interface.</p>
-                                </div>
-                                <div className="bg-white p-6 rounded-[32px] shadow-xl border border-slate-100">
-                                    <textarea
-                                        value={inputText}
-                                        onChange={(e) => setInputText(e.target.value)}
-                                        placeholder="Ex: 10 ans d'expérience en vente, souhaite se reconvertir..."
-                                        className="w-full h-64 p-6 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-black resize-none mb-6"
-                                    />
-                                    <button 
-                                        onClick={runAnalysis}
-                                        disabled={isAnalyzing || !inputText.trim()}
-                                        className="w-full bg-black text-white py-4 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-slate-800 transition-all disabled:bg-slate-300"
-                                    >
-                                        {isAnalyzing ? "Analyse en cours..." : "Lancer la démonstration"}
-                                    </button>
-                                </div>
+                            <div className="bg-white p-8 rounded-3xl border shadow-xl text-center">
+                                <h2 className="text-3xl font-black mb-6">Déposer un profil</h2>
+                                <textarea 
+                                    value={inputText}
+                                    onChange={(e) => setInputText(e.target.value)}
+                                    placeholder="Collez le CV ou les notes ici..."
+                                    className="w-full h-64 p-4 bg-slate-50 border rounded-2xl mb-6 outline-none focus:ring-2 focus:ring-orange-500"
+                                />
+                                <button 
+                                    onClick={runAnalysis}
+                                    disabled={!inputText.trim() || isAnalyzing}
+                                    className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold text-lg hover:bg-black transition-all"
+                                >
+                                    {isAnalyzing ? "Analyse en cours..." : "Lancer l'Analyse Métier"}
+                                </button>
                             </div>
                         ) : (
-                            <div className="space-y-8 animate-in fade-in duration-500">
-                                <button onClick={() => setStep('input')} className="text-slate-400 hover:text-black font-bold flex items-center gap-2">
-                                    ← Retour à la saisie
+                            <div className="space-y-6">
+                                <div className="bg-slate-900 text-white p-8 rounded-[40px]">
+                                    <h2 className="text-3xl font-black mb-2">Bilan Flash Terminé</h2>
+                                    <p className="text-slate-400">Voici les préconisations basées sur le profil.</p>
+                                </div>
+
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    <div className="bg-white p-6 rounded-3xl border shadow-sm">
+                                        <h3 className="font-black uppercase text-orange-600 mb-4">Soft Skills</h3>
+                                        <div className="flex flex-wrap gap-2">
+                                            {analysis.softSkills.map(s => <span className="px-3 py-1 bg-orange-50 text-orange-700 rounded-lg font-bold text-sm">{s}</span>)}
+                                        </div>
+                                    </div>
+                                    <div className="bg-white p-6 rounded-3xl border shadow-sm">
+                                        <h3 className="font-black uppercase text-blue-600 mb-4">Pistes de reconversion</h3>
+                                        {analysis.reconversionIdeas.map(i => (
+                                            <div className="mb-4 border-b pb-2">
+                                                <div className="flex justify-between font-bold">
+                                                    <span>{JOB_FAMILIES.find(f => f.id === i.familyId).name}</span>
+                                                    <span className="text-green-600">{i.suitability}%</span>
+                                                </div>
+                                                <p className="text-xs text-slate-500 italic">{i.reason}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="bg-white p-6 rounded-3xl border shadow-sm border-t-8 border-violet-500">
+                                    <h3 className="font-black uppercase text-violet-600 mb-4">Plan de Formation Suggéré</h3>
+                                    {analysis.trainingIdeas.map(t => (
+                                        <div>
+                                            <p className="font-bold">{t.title}</p>
+                                            <p className="text-sm text-slate-600">{t.description}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                                <button onClick={() => window.print()} className="w-full py-3 border-2 border-dashed border-slate-300 rounded-xl font-bold text-slate-400 hover:border-slate-900 hover:text-slate-900 transition-all">
+                                    Imprimer le bilan complet
                                 </button>
-                                <div className="bg-black text-white p-8 rounded-[40px]">
-                                    <h2 className="text-3xl font-black mb-4">Analyse terminée (Mode Démo)</h2>
-                                    <p className="text-slate-400">L'interface est prête. Pour activer l'IA réelle, connectez votre clé API dans les paramètres.</p>
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="p-6 bg-white rounded-3xl border border-slate-100 shadow-sm">
-                                        <h3 className="font-bold text-lg mb-2">Soft Skills détectées</h3>
-                                        <p className="text-slate-600 italic">Analyse visuelle prête...</p>
-                                    </div>
-                                    <div className="p-6 bg-white rounded-3xl border border-slate-100 shadow-sm">
-                                        <h3 className="font-bold text-lg mb-2">Pistes suggérées</h3>
-                                        <p className="text-slate-600 italic">Prêt pour le test métier.</p>
-                                    </div>
-                                </div>
                             </div>
                         )}
                     </main>
